@@ -24,7 +24,9 @@ def ctc():
         ctcs.connect((host,port))
          
         message = input("#{}:{}$> ".format(host,port))
-         
+        if message == "":
+                print("Invalid data entered, closing the client to protect the server.")
+                exit()
         while message != 'q':
                 ctcs.send(message.encode())
                 data = ctcs.recv(1024).decode()
@@ -46,9 +48,11 @@ def ctc():
                     print("\nKnown from the data recieved: "+str(data))
                 else:
                     print("Recieved data: "+str(data))
-                    
+
                 message = input("\n#{}:{}$> ".format(host,port))
-                 
+                if message == "":
+                    print("Invalid data entered, closing the client to protect the server.")
+                    exit()
         ctcs.close()
 
 if __name__ == '__main__':
