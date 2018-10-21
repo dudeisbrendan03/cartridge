@@ -44,12 +44,16 @@ class consoleDisplay(object):
         fname="{}-log.txt".format(date)
         
     from datetime import datetime
-    fnameSet=str(datetime.now().strftime('%Y-%m-%d'))+"-log.txt"
+    fnameSet="logs/"+str(datetime.now().strftime('%Y-%m-%d'))+"-log.txt"
 
     @staticmethod
     def log(mode="None",out="",noLog=False,file=fnameSet):
         from termcolor import colored as col
         from termcolor import cprint as cp
+        import colorama
+        from datetime import datetime
+
+        colorama.init()
         
         type=""
         if out == "":#User used the function incorrectly
@@ -58,22 +62,22 @@ class consoleDisplay(object):
             raise incorrectUsage
         elif mode == 'e':
             type = "ERROR"
-            if out != "":  print("{}: {}".format(col(type,"white",'on_red',attrs=['bold']),out)) # this shows up in the interactive prompt
+            if out != "":  cp("{}".format(type),"white",'on_red',attrs=['bold'],end=""); print(": {}".format(out)) # this shows up in the interactive prompt
         elif mode == 'w':
             type = "Warning"
-            if out != "":   print("{}: {}".format(col(type,"yellow"),out)) # this shows up in the interactive prompt
+            if out != "":   cp("{}".format(type),"yellow",attrs=['bold'],end=""); print(": {}".format(out)) # this shows up in the interactive prompt
         elif mode == 'n':
             type = "Notice"
             if out != "":   print("{}: {}".format(type,out)) # this shows up in the interactive prompt
         elif mode == 'i':
             type = "Info"
-            if out != "":   print("{}: {}".format(col(type,"blue"),out)) # this shows up in the interactive prompt
+            if out != "":   cp("{}".format(type),"blue",attrs=['bold'],end=""); print(": {}".format(out)) # this shows up in the interactive prompt
         elif mode == 's':
             type = "SUCCESS"
             if out != "":   print("{}: {}".format(col(type,"green",attrs=['bold']),out)) # this shows up in the interactive prompt
         if noLog == False:
             f = open(file, 'a') #prints now go the the file
-            f.write("\n{}: {}".format(type,out))   # nothing appears. it's written to log file instead
+            f.write("\n{} - {}: {}".format(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')),type,out))   # nothing appears. it's written to log file instead
             f.close
 
     @staticmethod
