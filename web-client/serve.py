@@ -24,7 +24,9 @@ PORT = 8080
 consoleDisplay.log('i','Setup: Preparing to serve webserver on {}'.format(PORT),False)
 Handler = http.server.SimpleHTTPRequestHandler
 httpd = socketserver.TCPServer(("", PORT), Handler)
-try:#Display hostname
+
+#Display hostname
+try:
     host_name = socket.gethostname()
     host_ip = socket.gethostbyname(host_name)
     consoleDisplay.log('i',"\nHostname: {}\nIP: {}".format(host_name,host_ip),False)
