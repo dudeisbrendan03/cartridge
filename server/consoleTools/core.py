@@ -44,10 +44,10 @@ class consoleDisplay(object):
         fname="{}-log.txt".format(date)
         
     from datetime import datetime
-    fnameSet=datetime.now().strftime('%Y-%m-%d')
+    fnameSet=str(datetime.now().strftime('%Y-%m-%d'))+"-log.txt"
 
     @staticmethod
-    def log(mode="None",out="",file=fnameSet+"-log.txt"):
+    def log(mode="None",out="",noLog=False,file=fnameSet):
         from termcolor import colored as col
         from termcolor import cprint as cp
         
@@ -71,12 +71,10 @@ class consoleDisplay(object):
         elif mode == 's':
             type = "SUCCESS"
             if out != "":   print("{}: {}".format(col(type,"green",attrs=['bold']),out)) # this shows up in the interactive prompt
-        import sys
-        temp = sys.stdout # store original stdout object for later
-        sys.stdout = open(file, 'w') #prints now go the the file
-        print("{}: {}".format(type,out))   # nothing appears. it's written to log file instead
-        sys.stdout.close() # ordinary file object
-        sys.stdout = temp  # restore print commands to interactive prompt
+        if noLog == False:
+            f = open(file, 'a') #prints now go the the file
+            f.write("\n{}: {}".format(type,out))   # nothing appears. it's written to log file instead
+            f.close
 
     @staticmethod
     def clear():
