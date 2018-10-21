@@ -13,7 +13,7 @@ _________________
 
 """)
 def ctc():
-        host = ""
+        host = "127.0.0.1"
         port = 5000
         
         if host == "0.0.0.0":
@@ -23,17 +23,24 @@ def ctc():
         ctcs = socket.socket()
         ctcs.connect((host,port))
          
-        message = input(" -> ")
+        message = input("#{}:{}$> ".format(host,port))
          
         while message != 'q':
                 ctcs.send(message.encode())
                 data = ctcs.recv(1024).decode()
-                 
-                print ('Received from server: ' + data)
-                 
+                
+                print("Recieved data: "+str(data))
+                if str(data) == "1":
+                    print("The server is going down for a gracious exit, closing the cilent.")
+                    input("Press ENTER to close")
+                    exit()
+                
                 message = input("#{}:{}$> ".format(host,port))
                  
         ctcs.close()
 
 if __name__ == '__main__':
-    ctc()
+    try:
+        ctc()
+    except ConnectionResetError:
+        print("\nThe server has gone down without specifying a reason")
