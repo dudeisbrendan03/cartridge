@@ -1,6 +1,8 @@
 import socket
-from consoleTools import consoleDisplay as cd
-
+try:
+    from consoleTools import consoleDisplay as cd
+except ModuleNotFoundError:
+    print("\nYou don't have consoleTools. This is used to displaying items to the console as well as logging them")
 global toExec
 global executionListNo
 toExec = []

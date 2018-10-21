@@ -13,20 +13,29 @@ _________________
 
 """)
 def ctc():
-        host = "11.0.0.1"
+        host = ""
         port = 5000
         
         if host == "0.0.0.0":
             print("\nCan not continue. Invalid hostname/IP.")
             exit()
+        elif host == "":
+            print("\nCan not continue. Set host in script.")
 
         ctcs = socket.socket()
-        ctcs.connect((host,port))
+        try:
+            ctcs.connect((host,port))
+        except OSError:
+            print("\nThe server you are trying to connect to isn't probably running, or is busy at this time.")
+            input("\nPress ENTER to exit the script")
+            exit()
          
         message = input("#{}:{}$> ".format(host,port))
+
         if message == "":
                 print("Invalid data entered, closing the client to protect the server.")
                 exit()
+
         while message != 'q':
                 ctcs.send(message.encode())
                 data = ctcs.recv(1024).decode()

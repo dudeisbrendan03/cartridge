@@ -7,6 +7,9 @@ class scriptFailureIOOP(Exception):
 class generalError(Exception):
     """Error that has occured with no reason specified"""
 
+class missingContent(Exception):
+    """You are missing a dependancy required by the script"""
+
 #class bcolors: REDUNDANT - DOESNT WORK ON WINDOWS BY DEFAULT
 #    HEADER = '\033[95m'
 #    OKBLUE = '\033[94m'
@@ -48,9 +51,13 @@ class consoleDisplay(object):
 
     @staticmethod
     def log(mode="None",out="",noLog=False,file=fnameSet):
-        from termcolor import colored as col
-        from termcolor import cprint as cp
-        import colorama
+        try:
+            from termcolor import colored as col
+            from termcolor import cprint as cp
+            import colorama
+        except ModuleNotFoundError:
+            print("\nMissing dependancy\n")
+            raise missingContent
         from datetime import datetime
 
         colorama.init()
