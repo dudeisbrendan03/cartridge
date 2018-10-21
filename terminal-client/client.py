@@ -13,7 +13,7 @@ _________________
 
 """)
 def ctc():
-        host = "127.0.0.1"
+        host = "11.0.0.1"
         port = 5000
         
         if host == "0.0.0.0":
@@ -29,13 +29,25 @@ def ctc():
                 ctcs.send(message.encode())
                 data = ctcs.recv(1024).decode()
                 
-                print("Recieved data: "+str(data))
+                
                 if str(data) == "1":
                     print("The server is going down for a gracious exit, closing the cilent.")
                     input("Press ENTER to close")
+                    print("\nKnown from the data recieved: "+str(data))
                     exit()
-                
-                message = input("#{}:{}$> ".format(host,port))
+                elif str(data) == "2:":
+                    print("Command successfully added")
+                    print("\nKnown from the data recieved: "+str(data))
+                elif str(data) == "4:":
+                    print("Executing command list")
+                    print("\nKnown from the data recieved: "+str(data))
+                elif str(data) == "5":
+                    print("Cleared all the commands in list")
+                    print("\nKnown from the data recieved: "+str(data))
+                else:
+                    print("Recieved data: "+str(data))
+                    
+                message = input("\n#{}:{}$> ".format(host,port))
                  
         ctcs.close()
 

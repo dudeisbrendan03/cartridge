@@ -14,6 +14,7 @@ CODE LIST
 2 - Command added
 3 - Terminated (loss of connection)
 4 - Exec list
+5 - Clear list
 
 """
 
@@ -39,18 +40,19 @@ if __name__ == '__main__':
         conn, addr = catridge.accept()
         cd.log('n',"Connection from: " + str(addr))
         while True:
+            try:
                 data = conn.recv(1024).decode()
                 if not data:
                         break
                 cd.log('i',"Command recieved: " + str(data))
                 if str(data) == "exec":
+                    cd.log('w',"About to run the following commands: "+str(toExec))
                     print("A")
                 elif str(data) == "term":
                     cd.log('e',"TERMINATE - NOW")
                     exit()
                 elif str(data) == "gracious":
                     cd.log('w',"Server is beginning gracious exit")
-
                     data = "1"
                     cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
                     conn.send(data.encode())
@@ -58,12 +60,25 @@ if __name__ == '__main__':
                     toExec = []
                     executionListNo = 0
                     exit(1)
+                elif str(data) == "list_commands":
+                    data = str(toExec)
+                    cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
+                    conn.send(data.encode())
+                elif str(data) == "clear_commands":
+                    data = "5"
+                    cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
+                    conn.send(data.encode())
+                    cd.log('i',"Clearing command list")
+                    toExec = []
+                    cd.log('s',"Command list cleared")
                 else:
                     toExec.append(str(data))
                     executionListNo+=1
                     data = "2"
                     cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
                     conn.send(data.encode())
+            except ConnectionResetError:
+                cd.log('w','The remote client exited without a reason')
     
         conn.close()
 
