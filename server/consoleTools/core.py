@@ -30,26 +30,27 @@ class consoleDisplay(object):
     """
     def __init__(self):
         from datetime import datetime #Date now command
-        date=str(datetime.now)
+        date=str(datetime.now().strftime('%Y-%m-%d'))
         #create files before use
-        from os import path as p
-        if p('logs/') == False:
+        import os.path as p
+        if p.exists('logs/') == False:
             try:
                 import os;os.mkdir('logs')
             except OSError:
                 raise scriptFailureIOOP
-        if p('logs/{}-log.txt'.format(date)) == False:
+        if p.exists('logs/{}-log.txt'.format(date)) == False:
             f=open('logs/{}-log.txt'.format(date),'w+')
             f.close()
         fname="{}-log.txt".format(date)
-        self.fname = fname
-
+        
     from datetime import datetime
     fnameSet=datetime.now().strftime('%Y-%m-%d')
 
     @staticmethod
     def log(mode="None",out="",file=fnameSet+"-log.txt"):
         from termcolor import colored as col
+        from termcolor import cprint as cp
+        
         type=""
         if out == "":#User used the function incorrectly
             raise incorrectUsage#User did an oof
@@ -57,19 +58,19 @@ class consoleDisplay(object):
             raise incorrectUsage
         elif mode == 'e':
             type = "ERROR"
-            if out != "":   print(col(type,"red")+": {}".format(out)) # this shows up in the interactive prompt
+            if out != "":  print("{}: {}".format(col(type,"white",'on_red',attrs=['bold']),out)) # this shows up in the interactive prompt
         elif mode == 'w':
-            type = "WARNING"
-            if out != "":   print(col(type,"orange")+": {}".format(out)) # this shows up in the interactive prompt
+            type = "Warning"
+            if out != "":   print("{}: {}".format(col(type,"yellow"),out)) # this shows up in the interactive prompt
         elif mode == 'n':
             type = "Notice"
             if out != "":   print("{}: {}".format(type,out)) # this shows up in the interactive prompt
         elif mode == 'i':
             type = "Info"
-            if out != "":   print(col(type,"blue")+": {}".format(out)) # this shows up in the interactive prompt
+            if out != "":   print("{}: {}".format(col(type,"blue"),out)) # this shows up in the interactive prompt
         elif mode == 's':
-            type = "Success"
-            if out != "":   print(col(type,"green")+": {}".format(out)) # this shows up in the interactive prompt
+            type = "SUCCESS"
+            if out != "":   print("{}: {}".format(col(type,"green",attrs=['bold']),out)) # this shows up in the interactive prompt
         import sys
         temp = sys.stdout # store original stdout object for later
         sys.stdout = open(file, 'w') #prints now go the the file
