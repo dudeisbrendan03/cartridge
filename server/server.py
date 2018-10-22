@@ -2,12 +2,22 @@ import socket
 try:
     from consoleTools import consoleDisplay as cd
 except ImportError:
-    print("\nYou don't have consoleTools. This is used to displaying items to the console as well as logging them")
+    print("\nYou don't have consoleTools. This is used to displaying items to the console as well as logging them\nGet it by running: pip install console-tools")
+    input()
+    exit()
+try:
+    from time import sleep
+except ImportError:
+    print("\nYour python install is damaged")
+    input()
+    exit()
 global toExec
 global executionListNo
-toExec = []
+toExec = []#add 
 executionListNo = 0
 exitval = False
+global safeexec
+safeexec = False#The value used to confirm execution - set to true to never warn about execution
 
 """
 CODE LIST
@@ -16,7 +26,8 @@ CODE LIST
 2 - Command added
 3 - Terminated (loss of connection)
 4 - Exec list
-5 - Clear list
+5 - Exec list cleared
+6 - Exec list arm
 
 """
 
@@ -39,6 +50,11 @@ if __name__ == '__main__':
         cd.log('i','Socket setup - 3 - Starting to listen on port')
         catridge.listen(1)
         cd.log('s','Socket setup - COMPLETE - Server is up and listening on "{}:{}"'.format(str(host),str(port)))
+        sleep(1)
+        cd.clear()
+        cd.log('i',"Cartridge (base) is up and running")
+        cd.printFile('atari.ascii')
+        print("\n")
         conn, addr = catridge.accept()
         cd.log('n',"Connection from: " + str(addr))
         while True:
@@ -47,13 +63,37 @@ if __name__ == '__main__':
                 if not data:
                         break
                 cd.log('i',"Command recieved: " + str(data))
-                if str(data) == "exec":
+                if str(data) == "/exec":
                     cd.log('w',"About to run the following commands: "+str(toExec))
-                    print("A")
-                elif str(data) == "term":
+                    if safeexec == False:
+                        cd.log('w',"Attempt to run the commands failed - not armed.")
+                        data = "6"
+                        cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
+                        conn.send(data.encode())
+                        safeexec = True
+                    elif safeexec == True:
+                        cd.log('w',"RUNNING THE EXECUTION LIST !!!WARNING!!! Exec list:"+str(toExec))
+                        data = "4"
+                        cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
+                        conn.send(data.encode())
+                        for x in toExec:
+                            from os import system as s
+                            s(x)
+                        safeexec = False
+
+                elif str(data) == "/payload":
+                    print("")
+                    #this will be used to send a payload to the other device
+                elif str(data) == "/payload settings":
+                    print("")
+                    #this will be used to send how the payload will be executed
+                elif str(data) == "/payload exec":
+                    print()
+                    #this will run whatever the payloads execution command is
+                elif str(data) == "/term":
                     cd.log('e',"TERMINATE - NOW")
                     exit()
-                elif str(data) == "gracious":
+                elif str(data) == "/gracious":
                     cd.log('w',"Server is beginning gracious exit")
                     data = "1"
                     cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
@@ -62,11 +102,11 @@ if __name__ == '__main__':
                     toExec = []
                     executionListNo = 0
                     exit(1)
-                elif str(data) == "list_commands":
+                elif str(data) == "/commands list":
                     data = str(toExec)
                     cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
                     conn.send(data.encode())
-                elif str(data) == "clear_commands":
+                elif str(data) == "/commands clear":
                     data = "5"
                     cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
                     conn.send(data.encode())
