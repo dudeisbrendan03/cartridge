@@ -55,7 +55,7 @@ class consoleDisplay(object):
             from termcolor import colored as col
             from termcolor import cprint as cp
             import colorama
-        except ModuleNotFoundError:
+        except ImportError:
             print("\nMissing dependancy\n")
             raise missingContent
         from datetime import datetime
