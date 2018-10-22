@@ -1,3 +1,8 @@
+<?php
+if ($_GET['run']) {
+  exec("python ../runrequest.py");
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +11,7 @@
     <title>Quick deploy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>    
 </head>
@@ -14,21 +19,6 @@
         <style>
             .center {text-align: center; position: absolute;}
         </style>
-        <script>
-        function a(){
-            $.ajax({
-                url:'ip.txt',
-                success: function (data){
-                //data is content of ip.txt
-                //debugger;//check what's inside.
-                if(!!data){
-                    window.location.href = data;
-                }
-                }
-            });
-        }
-        </script>
-        <a class="btn btn-outline-danger center" href="#" onclick="a();">Connect to instance</a>
-        <p><pre id="contents"></pre></p>
+        <a class="btn btn-outline-danger center" href="" role="button">Run comm</a>
     </body>
 </html>
