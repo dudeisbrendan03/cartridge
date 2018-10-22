@@ -13,7 +13,6 @@ try:
     if arglist[0] == "--force":
         cont=True
 except IndexError: cont=False
-print(str(sys.argv))
 
 if opname == 'posix':
     print("Not supported on linux machines yet.\nTo launch anyway, run with the parameter --force")
