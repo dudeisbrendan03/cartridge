@@ -13,15 +13,29 @@ except ImportError:
     exit()
 global toExec
 global executionListNo
-toExec = []#add 
+global safeexec
+
+#Config (to be moved to a file)
+defExec = []#Default exec - run these commands every time the /exec command is given
+ver = "0.1.12"#Script version
+safeexec = False#The value used to confirm execution - set to true to never warn about execution
+maxcon = 1#Maximum amount of connections at a single time (haven't added support for logging which IP did what yet)
+consolePort = 5000#The port that the console runs on (currently multi-tasks as file transfer and console/going to be changed)
+consoleHost = "127.0.0.1"#The place to bind the server to
+fileTransferPort = 50001#not in use
+fileTransferHost = "127.0.0.1"#not in use
+###CONFIG END
+
+toExec = defExec
 executionListNo = 0
 exitval = False
-global safeexec
-safeexec = False#The value used to confirm execution - set to true to never warn about execution
+host = consoleHost#To be removed
+port = consolePort#To be removed
 
 """
 CODE LIST
 ======
+0 - Unknown error
 1 - Gracious exit
 2 - Command added
 3 - Terminated (loss of connection)
@@ -33,28 +47,28 @@ CODE LIST
 
 if __name__ == '__main__':
     try:
-        host = "11.0.0.1"
-        port = 5000
         
-        if host == "0.0.0.0":
-            cd.log('w','INSECURE: Serving an ALL addresses')
+        if fileTransferHost == "0.0.0.0":
+            cd.log('w','INSECURE: [File transfer] Serving on ALL addresses')
+        if consoleHost == "0.0.0.0":
+            cd.log('w','INSECURE: Serving on ALL addresses')
         cd.log('i','Socket setup - 1 - Preparing socket')
         catridge = socket.socket()
-        cd.log('i','Socket setup - 2 - Binding cartridge server to "{}:{}"'.format(str(host),str(port)))
-        try:    catridge.bind((host,port))
+        cd.log('i','Socket setup - 2 - Binding cartridge server to "{}:{}"'.format(str(consoleHost),str(consolePort)))
+        try:    catridge.bind((consoleHost,consolePort))
         except OSError as e:
             cd.log('e','Could not start the server. Is the port in use?')
             print("\n\n=================\nInformation for nerds:\n"+str(e))
             exit()
         cd.log('s','Socket setup - 2 - Successfully bound the port')
         cd.log('i','Socket setup - 3 - Starting to listen on port')
-        catridge.listen(1)
-        cd.log('s','Socket setup - COMPLETE - Server is up and listening on "{}:{}"'.format(str(host),str(port)))
+        catridge.listen(maxcon)
+        cd.log('s','Socket setup - COMPLETE - Server is up and listening on "{}:{}"'.format(str(consoleHost),str(consolePort)))
         sleep(1)
         cd.clear()
         cd.log('i',"Cartridge (base) is up and running")
         cd.printFile('atari.ascii')
-        print("\n")
+        print("\n\nCartridge v{} (https://github.com/dudeisbrendan03/cartridge) running at {} on port {}".format(ver,consoleHost,consolePort))
         conn, addr = catridge.accept()
         cd.log('n',"Connection from: " + str(addr))
         while True:
@@ -80,10 +94,17 @@ if __name__ == '__main__':
                             from os import system as s
                             s(x)
                         safeexec = False
-
-                elif str(data) == "/payload":
+                elif str(data) == "/payload recieve":
+                    import os
+                    os.system('python fileRecieve.py {} {} {}'.format(fileTransferHost,fileTransferPort,maxcon))
+                elif str(data) == "/payload upload":
                     print("")
                     #this will be used to send a payload to the other device
+                elif str(data) == "/payload load":
+                    cd.log('e',"A client command was recieved by the server for some reason")
+                    data = "0"
+                    cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
+                    conn.send(data.encode())
                 elif str(data) == "/payload settings":
                     print("")
                     #this will be used to send how the payload will be executed
@@ -99,7 +120,7 @@ if __name__ == '__main__':
                     cd.log('n',"Sending: '{}'  to  '{}' ".format(str(data),str(addr)))
                     conn.send(data.encode())
                     catridge.close()
-                    toExec = []
+                    toExec = defExec
                     executionListNo = 0
                     exit(1)
                 elif str(data) == "/commands list":
