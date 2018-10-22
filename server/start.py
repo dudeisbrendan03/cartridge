@@ -8,9 +8,7 @@ import subprocess#needed for execution
 
 argamnt=len(sys.argv)
 arglist=sys.argv
-print(arglist)
 del arglist[0]
-print(str(arglist))
 try:
     if arglist[0] == "--force":
         cont=True
